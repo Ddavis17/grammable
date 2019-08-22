@@ -2,6 +2,58 @@ require 'rails_helper'
 
 RSpec.describe GramsController, type: :controller do
 
+  describe "grams#destroy action" do
+    it 'successfully destroy gram in the database' do
+      gram = FactoryBot.create(:gram)
+      delete :destroy, params: { id: gram.id }
+      expect(response).to redirect_to root_path
+      gram = Gram.find_by_id(gram.id)
+      expect(gram).to eq nil
+    end
+
+    it 'should return 404 if gram not found' do
+      delete :destroy, params: { id: 'spaceduck'}
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe 'grams#update action' do
+    it 'successfully update grams' do
+      gram = FactoryBot.create(:gram, message: 'Initial Value')
+      patch :update, params: { id: gram.id, gram: {message: 'Changed!'}}
+      expect(response).to redirect_to root_path
+      gram.reload
+      expect(gram.message).to eq 'Changed!'
+    end
+
+    it 'display 404 if gram isnt found' do 
+      patch :update, params: { id: 'YOLOSWAG', gram: {message: 'Changed'} }
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'if errors-render new form' do 
+      gram = FactoryBot.create(:gram, message: 'Initial Value')
+      patch :update, params: { id: gram.id, gram: { message: ''}}
+      expect(response).to have_http_status(:unprocessable_entity)
+      gram.reload
+      expect(gram.message).to eq 'Initial Value'
+    end
+  end
+
+  describe "grams#edit action" do
+    it "should show the edit form if the gram is found" do
+      gram = FactoryBot.create(:gram)
+      get :edit, params: { id: gram.id }
+      expect(response).to have_http_status(:success)
+    end
+
+
+    it "return a 404 if gram is not found" do
+      get :edit, params: { id: 'TACOCAT'}
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "grams#show action" do
     it 'should successfully show the page if the gram is found' do
       gram = FactoryBot.create(:gram)
