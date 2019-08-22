@@ -1,6 +1,11 @@
 class GramsController < ApplicationController
+  before_action :authenticate_user!, only: [:new, :create]
+
   def new
     @gram = Gram.new
+  end
+
+  def index
   end
 
   def create
@@ -12,9 +17,7 @@ class GramsController < ApplicationController
     end
   end
 
-  def index
-
-  end
+  
 
   private 
 
