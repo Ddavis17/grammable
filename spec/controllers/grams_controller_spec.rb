@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe GramsController, type: :controller do
 
   describe "grams#destroy action" do
-
-    it "shouldnt let the user who didnt create it destroy it" do 
+    
+    it "shouldnt let anautheinticated users detroy a gram" do 
       gram = FactoryBot.create(:gram)
       user = FactoryBot.create(:user)
       sign_in user
@@ -12,11 +12,6 @@ RSpec.describe GramsController, type: :controller do
       expect(response).to have_http_status(:forbidden)
     end
 
-    it "shouldnt let anautheinticated users detroy a gram" do 
-      gram = FactoryBot.create(:gram)
-      delete :destroy, params: { id: gram.id }
-      expect(response).to redirect_to new_user_session_path
-    end
     it 'successfully destroy gram in the database' do
       gram = FactoryBot.create(:gram)
       sign_in gram.user
@@ -38,7 +33,7 @@ RSpec.describe GramsController, type: :controller do
 
     it "shouldnt let users who didnt create gram update it " do
       gram = FactoryBot.create(:gram)
-      user = FactoryBot.create(:user)
+      user = FactoryBot.create(:gram)
       sign_in user
       patch :update, params: { id: gram.id, gram: { message: "yes"} }
       expect(response).to have_http_status(:forbidden)
@@ -83,16 +78,10 @@ RSpec.describe GramsController, type: :controller do
 
   describe "grams#edit action" do
 
-    it "shouldnt let a user who did not create the gram to update it" do 
+    it "shouldn't let unauthenticated users edit a gram" do
       gram = FactoryBot.create(:gram)
       user = FactoryBot.create(:user)
       sign_in user
-      get :edit, params: { id: gram.id }
-      expect(response).to have_http_status(:forbidden)
-    end
-
-    it "shouldn't let unauthenticated users edit a gram" do
-      gram = FactoryBot.create(:gram)
       get :edit, params: { id: gram.id }
       expect(response).to redirect_to new_user_session_path
     end
@@ -102,7 +91,7 @@ RSpec.describe GramsController, type: :controller do
       gram = FactoryBot.create(:gram)
       sign_in gram.user
       get :edit, params: { id: gram.id }
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status(:forbidden)
     end
 
 
