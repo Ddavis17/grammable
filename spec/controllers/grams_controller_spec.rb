@@ -33,15 +33,15 @@ RSpec.describe GramsController, type: :controller do
 
     it "shouldnt let users who didnt create gram update it " do
       gram = FactoryBot.create(:gram)
-      user = FactoryBot.create(:gram)
+      user = FactoryBot.create(:user)
       sign_in user
-      patch :update, params: { id: gram.id, gram: { message: "yes"} }
+      patch :update, params: { id: gram.id, gram: { message: "Hello!"} }
       expect(response).to have_http_status(:forbidden)
     end
 
     it 'shouldnt let unauthenicated users update a gram ' do
       gram = FactoryBot.create(:gram)
-      patch :update, params: { id: gram.id, gram: {message: "Hello!"} }
+      patch :update, params: { id: gram.id, gram: { message: "Hello!"} }
       expect(response).to redirect_to new_user_session_path
     end
 
@@ -83,7 +83,7 @@ RSpec.describe GramsController, type: :controller do
       user = FactoryBot.create(:user)
       sign_in user
       get :edit, params: { id: gram.id }
-      expect(response).to redirect_to new_user_session_path
+      expect(response).to have_http_status(:forbidden)
     end
 
 
@@ -91,7 +91,7 @@ RSpec.describe GramsController, type: :controller do
       gram = FactoryBot.create(:gram)
       sign_in gram.user
       get :edit, params: { id: gram.id }
-      expect(response).to have_http_status(:forbidden)
+      expect(response).to have_http_status(:success)
     end
 
 
@@ -142,14 +142,22 @@ RSpec.describe GramsController, type: :controller do
   end
 
   describe "grams#create action" do
+
+    it "should require users to be logged in" do
+      post :create, params: {gram: { message: 'Hello'}}
+      expect(response).to redirect_to new_user_session_path
+    end
     it "should successfully create a new gram in our database"  do
       
       user = FactoryBot.create(:user)
       sign_in user
-
-      post :create, params: { gram: { message: 'Hello!'} }
+      post :create, params: { 
+        gram: { 
+          message: 'Hello!',
+        photo: fixture_file_upload("/picture.png", 'image/png')
+        }
+       }
       expect(response).to redirect_to root_path 
-
       gram = Gram.last
       expect(gram.message).to eq("Hello!")
       expect(gram.user).to eq(user)
