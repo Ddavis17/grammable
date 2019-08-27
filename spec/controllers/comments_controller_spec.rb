@@ -9,18 +9,18 @@ RSpec.describe CommentsController, type: :controller do
       user = FactoryBot.create(:user)
       sign_in user
 
-      post :create, params: { gram_id: gram.id, comment: { message: 'awesome gram' } }
+      post :create, params: { gram_id: gram.id, comment: { message: "awesome gram" } }
 
       expect(response).to redirect_to root_path
-      expect (gram.comments.length).to eq 1
-      expect(grams.comments.first.message).to eq 'awesome gram'
+      expect(gram.comments.length).to eq 1
+      expect(gram.comments.first.message).to eq "awesome gram"
     end
 
     it "should require users to be logged in before commenting on grams " do
       gram = FactoryBot.create(:gram)
 
-      post :create, params: { gram_id: gram.id, comment: { message: 'awesome gram'} }
-      
+      post :create, params: { gram_id: gram.id, comment: { message: 'awesome gram' } }
+
       expect(response).to redirect_to new_user_session_path
     end
 
@@ -28,7 +28,7 @@ RSpec.describe CommentsController, type: :controller do
       user = FactoryBot.create(:user)
       sign_in user
 
-      post :create, params: { gram_id: gram.id, comment: { message: 'awesome gram' } }
+      post :create, params: { gram_id: 'hello', comment: { message: 'hello' } }
 
       expect(response).to have_http_status :not_found
     end
