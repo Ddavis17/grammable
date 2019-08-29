@@ -4,7 +4,7 @@
       <div class="handle"> <%= gram.user.email %> </div>
       <%= image_tag gram.picture.url, class: 'img-fluid' %>
       <p>
-      <%= gram.message %>
+        <%= gram.message %>
       </p>
       <div class="gram-action float-right">
         <% if current_user && current_user == gram.user %>
