@@ -7,7 +7,7 @@
       <%= gram.message %>
       </p>
       <div class="gram-action float-right">
-        <%= if current_user && current_user == gram.user %>
+        <% if current_user && current_user == gram.user %>
           <%= link_to 'Edit', edit_gram_path(gram) %>
           <%= link_to 'Delete', gram_path(gram), method: :delete, data: {confirm: "Are You Sure?"} %>
         <% end %>
