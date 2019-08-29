@@ -22,7 +22,7 @@
           </span>
           <%= comment.message %>
         </div>
-        <%= simple_form_for Comment.new, url: gram_comments_path(gram) do |f| %>
+        <% simple_form_for Comment.new, url: gram_comments_path(gram) do |f| %>
           <%= f.input :message %>
           <%= f.submit 'Add Comment', class: 'my-btn' %>
         <% end %>
